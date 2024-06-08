@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "798666237863",
+    "firebase_url": "https://login-register-firebase-895ce-default-rtdb.firebaseio.com",
+    "project_id": "login-register-firebase-895ce",
+    "storage_bucket": "login-register-firebase-895ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798666237863:android:c5acd7eae7634457e3f882",
+        "android_client_info": {
+          "package_name": "com.improve10.loginregister"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH7mEO9Grf8MkUTJOVLmalbGPErWdEVZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

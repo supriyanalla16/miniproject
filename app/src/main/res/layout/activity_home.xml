@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#352F2F"
+    android:backgroundTint="#F4BEA8"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
+        android:text="CalmCompanion"
+        android:textColor="#0E0202"
+        android:textSize="36dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_community_blog"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/tv_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="Community Blog" />
+
+
+
+    <Button
+        android:id="@+id/btn_consultant"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn_community_blog"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="Consultant" />
+
+    <Button
+        android:id="@+id/btn_links"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn_consultant"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="Links" />
+
+
+</RelativeLayout>
