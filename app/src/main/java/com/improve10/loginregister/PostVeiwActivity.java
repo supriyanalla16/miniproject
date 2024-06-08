@@ -13,7 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class PostsActivity extends AppCompatActivity {
+public class PostVeiwActivity extends AppCompatActivity {
 
     private LinearLayout linearLayoutPosts;
     private DatabaseReference databasePosts;
@@ -21,7 +21,7 @@ public class PostsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posts);
+        setContentView(R.layout.activity_post_veiw);
 
         linearLayoutPosts = findViewById(R.id.linearLayoutPosts);
 
@@ -36,9 +36,10 @@ public class PostsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 linearLayoutPosts.removeAllViews();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Post post = postSnapshot.getValue(Post.class);
+                    Post1 post = postSnapshot.getValue(Post1.class);
                     if (post != null) {
-                        TextView postView = new TextView(PostsActivity.this);
+
+                        TextView postView = new TextView(PostVeiwActivity.this);
                         postView.setText(post.getTitle() + "\n" + post.getContent());
                         postView.setPadding(16, 16, 16, 16);
                         linearLayoutPosts.addView(postView);
