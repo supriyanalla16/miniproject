@@ -43,7 +43,7 @@ public class CommunityActivity extends AppCompatActivity {
         buttonViewPosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CommunityActivity.this, PostsActivity.class);
+                Intent intent = new Intent(CommunityActivity.this, PostVeiwActivity.class);
                 startActivity(intent);
             }
         });
@@ -55,7 +55,7 @@ public class CommunityActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)) {
             String id = databasePosts.push().getKey();
-            Post post = new Post(id, title, content);
+            Post1 post = new Post1(id, title, content);
             databasePosts.child(id).setValue(post);
 
             editTextTitle.setText("");
