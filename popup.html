@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set UID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+        #uidInput {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        #saveUidButton {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #saveUidButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter UID</h2>
+    <input type="text" id="uidInput" placeholder="Enter UID" />
+    <button id="saveUidButton">Save UID</button>
+    <p id="statusMessage"></p>
+    <script src="popup.js"></script>
+</body>
+</html>
