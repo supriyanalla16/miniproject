@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PostVeiwActivity extends AppCompatActivity {
@@ -69,9 +70,9 @@ public class PostVeiwActivity extends AppCompatActivity {
         EditText commentInput = postView.findViewById(R.id.commentInput);
         LinearLayout commentsLayout = postView.findViewById(R.id.commentsLayout);
 
-        if (titleView != null) titleView.setText(post.getTitle());
-        if (contentView != null) contentView.setText(post.getContent());
-        if (likesView != null) likesView.setText(String.valueOf(post.getLikes()));
+        titleView.setText(post.getTitle());
+        contentView.setText(post.getContent());
+        likesView.setText(String.valueOf(post.getLikes()));
 
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +88,12 @@ public class PostVeiwActivity extends AppCompatActivity {
                 String comment = commentInput.getText().toString().trim();
                 if (!TextUtils.isEmpty(comment)) {
                     String userId = "user"; // Replace with actual user ID
-                    post.addComment(userId, comment);
+                    Map<String, String> currentComments = post.getComments();
+                    if (currentComments == null) {
+                        currentComments = new HashMap<>();
+                    }
+                    currentComments.put(userId + "_" + System.currentTimeMillis(), comment);
+                    post.setComments(currentComments);
                     databasePosts.child(post.getId()).setValue(post);
                     commentInput.setText("");
                 } else {
