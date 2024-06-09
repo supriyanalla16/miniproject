@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/postTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/postContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/postLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <ImageButton
+        android:id="@+id/likeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/btn_star_big_on"
+        android:contentDescription="Like Button"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/commentInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Add a comment"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/commentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit Comment"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/commentsHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comments"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <LinearLayout
+        android:id="@+id/commentsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+    </LinearLayout>
+
+</LinearLayout>
