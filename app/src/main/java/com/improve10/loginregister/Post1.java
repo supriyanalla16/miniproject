@@ -47,6 +47,9 @@ public class Post1 {
     public void addLike() {
         this.likes++;
     }
+    public void setComments(Map<String, String> comments) {
+        this.comments = comments;
+    }
 
     public void addComment(String userId, String comment) {
         this.comments.put(userId, comment);
