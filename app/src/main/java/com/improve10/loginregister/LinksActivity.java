@@ -1,12 +1,14 @@
 package com.improve10.loginregister;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class LinksActivity extends AppCompatActivity {
     Button CalmSong;
@@ -18,11 +20,11 @@ public class LinksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_links);
+
         CalmSong = findViewById(R.id.button2);
         Refresh = findViewById(R.id.button3);
-        Pizza= findViewById(R.id.button4);
+        Pizza = findViewById(R.id.button4);
         Slime = findViewById(R.id.button5);
-
 
         CalmSong.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,9 +33,9 @@ public class LinksActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
-
             }
         });
+
         Refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,9 +43,9 @@ public class LinksActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
-
             }
         });
+
         Pizza.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,9 +53,9 @@ public class LinksActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
-
             }
         });
+
         Slime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,9 +63,15 @@ public class LinksActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
-
             }
         });
 
+        // Handle the back button press using OnBackPressedDispatcher
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navigateUpTo(new Intent(LinksActivity.this, HomeActivity.class));
+            }
+        });
     }
 }

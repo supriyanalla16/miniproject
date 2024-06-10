@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewYogaAsanasHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:text="Exercises"
+        android:textSize="48sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textViewiv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:text="Surya Namaskaram"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Surya Namaskar 1"
+                android:src="@drawable/su1" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su2"
+                android:contentDescription="Surya Namaskar 2"
+                android:layout_marginEnd="16dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su3"
+                android:contentDescription="Surya Namaskar 3"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su4"
+                android:contentDescription="Surya Namaskar 4"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su5"
+                android:contentDescription="Surya Namaskar 5"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su6"
+                android:contentDescription="Surya Namaskar 6"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su7"
+                android:contentDescription="Surya Namaskar 7"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su8"
+                android:contentDescription="Surya Namaskar 8"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su9"
+                android:contentDescription="Surya Namaskar 9"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su10"
+                android:contentDescription="Surya Namaskar 10"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su11"
+                android:contentDescription="Surya Namaskar 11"
+                android:layout_marginEnd="16dp" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/su12"
+                android:contentDescription="Surya Namaskar 12"
+                android:layout_marginEnd="16dp" />
+
+
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</LinearLayout>
