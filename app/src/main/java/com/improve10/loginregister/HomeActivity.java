@@ -1,5 +1,6 @@
 package com.improve10.loginregister;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +9,14 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class HomeActivity extends AppCompatActivity {
-    Button Commutiy;
-    Button Consultency;
+    Button Community;
+    Button Consultancy;
     Button Links;
     Button Refresh;
     Button Yoga;
@@ -34,30 +40,35 @@ public class HomeActivity extends AppCompatActivity {
     };
 
     int currentQuoteIndex = 0;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Commutiy = findViewById(R.id.btn_community_blog);
-        Consultency = findViewById(R.id.btn_consultant);
+        Community = findViewById(R.id.btn_community_blog);
+        Consultancy = findViewById(R.id.btn_consultant);
         Links = findViewById(R.id.btn_links);
         Refresh = findViewById(R.id.btn_refresh);
         Quote = findViewById(R.id.tv_quote);
         MainLayout = findViewById(R.id.main_layout);
         Yoga = findViewById(R.id.btn_yoga);
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         Yoga.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),YogaActivity.class);
+                Intent intent = new Intent(getApplicationContext(), YogaActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-        Commutiy.setOnClickListener(new View.OnClickListener() {
+        Community.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CommunityActivity.class);
@@ -65,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
             }
         });
-        Consultency.setOnClickListener(new View.OnClickListener() {
+        Consultancy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ConsultancyActivity.class);
@@ -90,5 +101,38 @@ public class HomeActivity extends AppCompatActivity {
                 MainLayout.setBackgroundResource(backgroundImages[currentQuoteIndex]);
             }
         });
+
+        fetchUserId();
+    }
+
+    private void fetchUserId() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            db.collection("users").document(userId).get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                String username = document.getString("username");
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar().setTitle(username);
+                                }
+                            } else {
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar().setTitle("User ID not found");
+                                }
+                            }
+                        } else {
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar().setTitle("Error fetching User ID");
+                            }
+                        }
+                    });
+        } else {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("No user is signed in");
+            }
+        }
     }
 }

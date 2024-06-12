@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -30,7 +31,7 @@ import java.util.Map;
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
     private String token = null;
-    TextInputEditText editTextEmail, editTextPassword;
+    TextInputEditText editTextUsername, editTextEmail, editTextPassword;
     Button buttonSignup;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
@@ -55,6 +56,7 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        editTextUsername = findViewById(R.id.username);
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonSignup = findViewById(R.id.btn_signup);
@@ -74,10 +76,16 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                String email, password;
+                String username, email, password;
+                username = String.valueOf(editTextUsername.getText());
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
 
+                if (TextUtils.isEmpty(username)) {
+                    Toast.makeText(SignupActivity.this, "Enter username", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    return;
+                }
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(SignupActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
@@ -98,10 +106,32 @@ public class SignupActivity extends AppCompatActivity {
                                     // Sign up success
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
-                                    fetchFcmTokenAndSave(user); // Fetch FCM token and save to Firestore
+
+                                    // Update profile with username
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(username)
+                                            .build();
+                                    user.updateProfile(profileUpdates)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "User profile updated.");
+                                                    }
+                                                }
+                                            });
+
+                                    // Save user info to Firestore
+                                    saveUserToFirestore(user, username);
+
+                                    // Fetch FCM token and save to Firestore
+                                    fetchFcmTokenAndSave(user);
+                                    setTitle(username);
                                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                                    intent.putExtra("username", username);
                                     startActivity(intent);
                                     finish();
+
                                 } else {
                                     // If sign up fails, display a message to the user.
                                     Toast.makeText(SignupActivity.this, "Authentication failed: " + task.getException().getMessage(),
@@ -168,6 +198,26 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
+    private void saveUserToFirestore(FirebaseUser user, String username) {
+        // Create a new user document with the user information
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("uid", user.getUid());
+        userData.put("email", user.getEmail());
+        userData.put("username", username);
+
+        // Save the user data to Firestore in a collection named "users"
+        db.collection("users").document(user.getUid())
+                .set(userData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User data successfully written!");
+                    Toast.makeText(SignupActivity.this, "User data saved to Firestore", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error writing user data", e);
+                    Toast.makeText(SignupActivity.this, "Error saving user data to Firestore", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void storeUidInChromeExtension(String uid) {
         WebView webView = new WebView(this);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -183,4 +233,3 @@ public class SignupActivity extends AppCompatActivity {
         webView.loadUrl(extensionUrl);
     }
 }
-//Testing
