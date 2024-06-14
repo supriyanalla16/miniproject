@@ -14,6 +14,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,10 +27,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostVeiwActivity extends AppCompatActivity {
+public class PostViewActivity extends AppCompatActivity {
 
     private LinearLayout linearLayoutPosts;
     private DatabaseReference databasePosts;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,8 @@ public class PostVeiwActivity extends AppCompatActivity {
 
         linearLayoutPosts = findViewById(R.id.linearLayoutPosts);
         databasePosts = FirebaseDatabase.getInstance().getReference("posts");
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
         loadPosts();
     }
@@ -54,7 +62,7 @@ public class PostVeiwActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(PostVeiwActivity.this, "Failed to load posts", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostViewActivity.this, "Failed to load posts", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -62,6 +70,7 @@ public class PostVeiwActivity extends AppCompatActivity {
     private void addPostToLayout(Post1 post) {
         View postView = LayoutInflater.from(this).inflate(R.layout.activity_post_item, null);
 
+        TextView usernameView = postView.findViewById(R.id.postUsername);
         TextView titleView = postView.findViewById(R.id.postTitle);
         TextView contentView = postView.findViewById(R.id.postContent);
         TextView likesView = postView.findViewById(R.id.postLikes);
@@ -70,6 +79,7 @@ public class PostVeiwActivity extends AppCompatActivity {
         EditText commentInput = postView.findViewById(R.id.commentInput);
         LinearLayout commentsLayout = postView.findViewById(R.id.commentsLayout);
 
+        usernameView.setText(post.getUsername());
         titleView.setText(post.getTitle());
         contentView.setText(post.getContent());
         likesView.setText(String.valueOf(post.getLikes()));
@@ -87,17 +97,28 @@ public class PostVeiwActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String comment = commentInput.getText().toString().trim();
                 if (!TextUtils.isEmpty(comment)) {
-                    String userId = "user"; // Replace with actual user ID
-                    Map<String, String> currentComments = post.getComments();
-                    if (currentComments == null) {
-                        currentComments = new HashMap<>();
+                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser != null) {
+                        String userId = currentUser.getUid();
+                        DocumentReference userRef = firestore.collection("users").document(userId);
+                        userRef.get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                String username = task.getResult().getString("username");
+                                Map<String, String> currentComments = post.getComments();
+                                if (currentComments == null) {
+                                    currentComments = new HashMap<>();
+                                }
+                                currentComments.put(username + "_" + System.currentTimeMillis(), comment);
+                                post.setComments(currentComments);
+                                databasePosts.child(post.getId()).setValue(post);
+                                commentInput.setText("");
+                            } else {
+                                Toast.makeText(PostViewActivity.this, "Failed to fetch username", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                    currentComments.put(userId + "_" + System.currentTimeMillis(), comment);
-                    post.setComments(currentComments);
-                    databasePosts.child(post.getId()).setValue(post);
-                    commentInput.setText("");
                 } else {
-                    Toast.makeText(PostVeiwActivity.this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostViewActivity.this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -106,7 +127,7 @@ public class PostVeiwActivity extends AppCompatActivity {
         if (post.getComments() != null) {
             for (Map.Entry<String, String> commentEntry : post.getComments().entrySet()) {
                 TextView commentView = new TextView(this);
-                commentView.setText(commentEntry.getValue());
+                commentView.setText(commentEntry.getKey().split("_")[0] + ": " + commentEntry.getValue());
                 commentsLayout.addView(commentView);
             }
         }

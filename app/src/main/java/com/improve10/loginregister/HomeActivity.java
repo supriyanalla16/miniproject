@@ -64,7 +64,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), YogaActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -73,24 +72,15 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CommunityActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
-        Consultancy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ConsultancyActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        Consultancy.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ConsultancyActivity.class);
+            startActivity(intent);
         });
-        Links.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LinksActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        Links.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, LinksActivity.class);
+            startActivity(intent);
         });
 
         Refresh.setOnClickListener(new View.OnClickListener() {

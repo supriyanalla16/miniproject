@@ -3,8 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
-
+    android:padding="16dp"
+    android:background="@drawable/border_layout"
+    android:layout_margin="8dp">
+    <TextView
+        android:id="@+id/postUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="italic" />
     <TextView
         android:id="@+id/postTitle"
         android:layout_width="wrap_content"
@@ -19,33 +26,42 @@
         android:textSize="14sp"
         android:layout_marginTop="8dp" />
 
-    <TextView
-        android:id="@+id/postLikes"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="end">
 
-    <ImageButton
-        android:id="@+id/likeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/btn_star_big_on"
-        android:contentDescription="Like Button"
-        android:layout_marginTop="8dp" />
+        <ImageButton
+            android:id="@+id/likeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/btn_star_big_on"
+            android:contentDescription="Like Button"
+            android:layout_marginStart="8dp" />
+
+        <TextView
+            android:id="@+id/postLikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp" />
+
+        <Button
+            android:id="@+id/commentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit Comment"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/commentInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Add a comment"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/commentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit Comment"
         android:layout_marginTop="8dp" />
 
     <TextView

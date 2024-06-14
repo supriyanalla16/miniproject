@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -21,7 +22,7 @@
             android:name=".Post_Item"
             android:exported="false" />
         <activity
-            android:name=".PostVeiwActivity"
+            android:name=".PostViewActivity"
             android:exported="false" />
         <activity
             android:name=".PostitemActivity"
@@ -58,15 +59,12 @@
             android:exported="false" />
         <activity
             android:name=".ConsultancyActivity"
+            android:parentActivityName=".HomeActivity"
             android:exported="false" />
         <activity
             android:name=".LinksActivity"
-            android:exported="false"
-            android:parentActivityName=".HomeActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
-        </activity>
+            android:parentActivityName=".HomeActivity"
+            android:exported="false" />
         <activity
             android:name=".CommunityActivity"
             android:exported="false" />
