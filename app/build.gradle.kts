@@ -33,6 +33,8 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("org.nanohttpd:nanohttpd:2.3.1")

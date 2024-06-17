@@ -8,6 +8,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.os.Handler;
+import android.os.Looper;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,21 +79,67 @@ public class CommunityActivity extends AppCompatActivity {
                 userRef.get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         String username = task.getResult().getString("username");
-                        String id = databasePosts.push().getKey();
-                        Post1 post = new Post1(id, title, content, username);
-                        databasePosts.child(id).setValue(post);
 
-                        editTextTitle.setText("");
-                        editTextContent.setText("");
+                        SentimentAnalyzer.analyzeSentiment(content, new SentimentAnalyzer.SentimentCallback() {
+                            @Override
+                            public void onSuccess(float score) {
+                                if (score < 0) {
+                                    // Notify admin or handle negative post
+                                    runOnUiThread(() -> {
+                                        showNegativeSentimentDialog();
+                                    });
+                                } else {
+                                    String id = databasePosts.push().getKey();
+                                    Post1 post = new Post1(id, title, content, username);
+                                    databasePosts.child(id).setValue(post);
 
-                        Toast.makeText(this, "Post submitted", Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(() -> {
+                                        editTextTitle.setText("");
+                                        editTextContent.setText("");
+                                        showPostSubmittedDialog();
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to analyze sentiment", Toast.LENGTH_SHORT).show());
+                            }
+                        });
                     } else {
-                        Toast.makeText(this, "Failed to fetch username", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CommunityActivity.this, "Failed to fetch username", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         } else {
             Toast.makeText(this, "Please fill out both fields", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showPostSubmittedDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Post Submitted")
+                .setMessage("Your post has been successfully submitted.")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with other operations if needed
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
+
+    private void showNegativeSentimentDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Negative Sentiment Detected")
+                .setMessage("Your post has been flagged for negative sentiment. We recommend checking out these resources to feel better.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(CommunityActivity.this, LinksActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }

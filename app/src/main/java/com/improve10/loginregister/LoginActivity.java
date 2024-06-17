@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (document.exists()) {
                                 String username = document.getString("username");
                                 setTitle(username);
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                 intent.putExtra("username", username);
                                 startActivity(intent);
                                 finish();
