@@ -1,25 +1,16 @@
 package com.improve10.loginregister;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.os.Handler;
-import android.os.Looper;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,22 +74,23 @@ public class CommunityActivity extends AppCompatActivity {
                         SentimentAnalyzer.analyzeSentiment(content, new SentimentAnalyzer.SentimentCallback() {
                             @Override
                             public void onSuccess(float score) {
-                                if (score < 0) {
-                                    // Notify admin or handle negative post
-                                    runOnUiThread(() -> {
-                                        showNegativeSentimentDialog();
-                                    });
-                                } else {
-                                    String id = databasePosts.push().getKey();
-                                    Post1 post = new Post1(id, title, content, username);
-                                    databasePosts.child(id).setValue(post);
-
-                                    runOnUiThread(() -> {
-                                        editTextTitle.setText("");
-                                        editTextContent.setText("");
-                                        showPostSubmittedDialog();
-                                    });
-                                }
+                                String id = databasePosts.push().getKey();
+                                Post1 post = new Post1(id, title, content, username);
+                                databasePosts.child(id).setValue(post).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        runOnUiThread(() -> {
+                                            editTextTitle.setText("");
+                                            editTextContent.setText("");
+                                            if (score < 0) {
+                                                showNegativeSentimentDialog();
+                                            } else {
+                                                showPostSubmittedDialog();
+                                            }
+                                        });
+                                    } else {
+                                        runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to submit post", Toast.LENGTH_SHORT).show());
+                                    }
+                                });
                             }
 
                             @Override
@@ -135,11 +127,15 @@ public class CommunityActivity extends AppCompatActivity {
                 .setMessage("Your post has been flagged for negative sentiment. We recommend checking out these resources to feel better.")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(CommunityActivity.this, LinksActivity.class);
-                        startActivity(intent);
+                        redirectToConsultancy();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void redirectToConsultancy() {
+        Intent intent = new Intent(CommunityActivity.this, ConsultancyActivity.class);
+        startActivity(intent);
     }
 }

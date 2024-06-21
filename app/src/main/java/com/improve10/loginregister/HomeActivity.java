@@ -2,21 +2,18 @@ package com.improve10.loginregister;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,7 +50,6 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private static final String CHANNEL_ID = "MyNotificationChannel";
-    private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         Quote = findViewById(R.id.tv_quote);
         MainLayout = findViewById(R.id.main_layout);
         Yoga = findViewById(R.id.btn_yoga);
+
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -82,18 +79,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
         Community.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (ActivityCompat.checkSelfPermission(HomeActivity.this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(HomeActivity.this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
-                    } else {
-                        sendNotification();
-                    }
-                } else {
-                    sendNotification();
-                }
                 Intent intent = new Intent(getApplicationContext(), CommunityActivity.class);
                 startActivity(intent);
             }
@@ -167,36 +156,5 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(com.google.android.gms.base.R.drawable.common_google_signin_btn_icon_dark)
-                .setContentTitle("My Title")
-                .setContentText("Hello")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        // Check for notification permission
-        if (notificationManager.areNotificationsEnabled()) {
-            notificationManager.notify(1, builder.build());
-        } else {
-            // Handle case when notifications are not enabled
-            // Maybe show a toast or log this event
-            Toast.makeText(this, "Notifications are not enabled", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendNotification();
-            } else {
-                // Handle case when permission is denied
-                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 }

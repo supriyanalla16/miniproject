@@ -69,9 +69,13 @@
                     android:text="  v.jahnavi@gnits.ac.in"
                     android:textSize="20sp" />
 
+                <!-- Book Slot Button -->
+                <Button
+                    android:id="@+id/buttonBookSlot1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Book Slot" />
             </LinearLayout>
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -116,11 +120,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="   Communication Coach" />
+
+                    <!-- Book Slot Button -->
+                    <Button
+                        android:id="@+id/buttonBookSlot2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Book Slot" />
                 </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
-
 
     </LinearLayout>
 
