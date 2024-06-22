@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -67,35 +68,21 @@ public class CommunityActivity extends AppCompatActivity {
             if (currentUser != null) {
                 String userId = currentUser.getUid();
                 DocumentReference userRef = firestore.collection("users").document(userId);
-                userRef.get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        String username = task.getResult().getString("username");
+                userRef.get().addOnCompleteListener(userTask -> {
+                    if (userTask.isSuccessful() && userTask.getResult() != null) {
+                        String username = userTask.getResult().getString("username");
 
-                        SentimentAnalyzer.analyzeSentiment(content, new SentimentAnalyzer.SentimentCallback() {
-                            @Override
-                            public void onSuccess(float score) {
-                                String id = databasePosts.push().getKey();
-                                Post1 post = new Post1(id, title, content, username);
-                                databasePosts.child(id).setValue(post).addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        runOnUiThread(() -> {
-                                            editTextTitle.setText("");
-                                            editTextContent.setText("");
-                                            if (score < 0) {
-                                                showNegativeSentimentDialog();
-                                            } else {
-                                                showPostSubmittedDialog();
-                                            }
-                                        });
-                                    } else {
-                                        runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to submit post", Toast.LENGTH_SHORT).show());
-                                    }
+                        String id = databasePosts.push().getKey();
+                        Post1 post = new Post1(id, title, content, username);
+                        databasePosts.child(id).setValue(post).addOnCompleteListener(postTask -> {
+                            if (postTask.isSuccessful()) {
+                                runOnUiThread(() -> {
+                                    editTextTitle.setText("");
+                                    editTextContent.setText("");
+                                    analyzeSentimentAndHandleResult(userRef, content);
                                 });
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to analyze sentiment", Toast.LENGTH_SHORT).show());
+                            } else {
+                                runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to submit post", Toast.LENGTH_SHORT).show());
                             }
                         });
                     } else {
@@ -106,6 +93,48 @@ public class CommunityActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Please fill out both fields", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void analyzeSentimentAndHandleResult(DocumentReference userRef, String content) {
+        SentimentAnalyzer.analyzeSentiment(content, new SentimentAnalyzer.SentimentCallback() {
+            @Override
+            public void onSuccess(float score) {
+                if (score < 0) {
+                    handleNegativeSentiment(userRef);
+                } else {
+                    resetNegativeSentimentCounter(userRef);
+                    showPostSubmittedDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                runOnUiThread(() -> Toast.makeText(CommunityActivity.this, "Failed to analyze sentiment", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void handleNegativeSentiment(DocumentReference userRef) {
+        userRef.update("negativeSentimentCount", FieldValue.increment(1))
+                .addOnCompleteListener(negSentTask -> {
+                    if (negSentTask.isSuccessful()) {
+                        userRef.get().addOnCompleteListener(countTask -> {
+                            if (countTask.isSuccessful() && countTask.getResult() != null) {
+                                Long count = countTask.getResult().getLong("negativeSentimentCount");
+                                if (count != null && count >= 5) {
+                                    showConsultancyRedirectDialog();
+                                    userRef.update("negativeSentimentCount", 0);  // Reset counter
+                                } else {
+                                    showNegativeSentimentDialog();
+                                }
+                            }
+                        });
+                    }
+                });
+    }
+
+    private void resetNegativeSentimentCounter(DocumentReference userRef) {
+        userRef.update("negativeSentimentCount", 0);
     }
 
     private void showPostSubmittedDialog() {
@@ -122,9 +151,14 @@ public class CommunityActivity extends AppCompatActivity {
     }
 
     private void showNegativeSentimentDialog() {
+
+
+    }
+
+    private void showConsultancyRedirectDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Negative Sentiment Detected")
-                .setMessage("Your post has been flagged for negative sentiment. We recommend checking out these resources to feel better.")
+                .setTitle("Consecutive Negative Posts Detected")
+                .setMessage("You have posted several negative posts in a row. We recommend you check out these resources to feel better.")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         redirectToConsultancy();

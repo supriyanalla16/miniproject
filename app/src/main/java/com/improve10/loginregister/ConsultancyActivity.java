@@ -1,7 +1,5 @@
 package com.improve10.loginregister;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,19 +7,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class ConsultancyActivity extends AppCompatActivity {
 
@@ -34,6 +39,8 @@ public class ConsultancyActivity extends AppCompatActivity {
             "03:00 PM - 04:00 PM"
     };
 
+    private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
     private DatabaseReference databaseReference;
 
     @Override
@@ -42,7 +49,13 @@ public class ConsultancyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_consultancy);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Initialize Firebase Database
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance();
+
+        // Initialize Firebase Authentication
+        auth = FirebaseAuth.getInstance();
+
+        // Initialize Firebase Realtime Database
         databaseReference = FirebaseDatabase.getInstance().getReference("bookings");
 
         // Set click listeners for buttons
@@ -101,7 +114,7 @@ public class ConsultancyActivity extends AppCompatActivity {
     }
 
     private void updateAvailableSlots(Calendar date, String timeSlot, TextView textViewAvailableSlots) {
-        String dateKey = String.format("%04d%02d%02d", date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH));
+        String dateKey = new SimpleDateFormat("yyyyMMdd", Locale.US).format(date.getTime());
         databaseReference.child(dateKey).orderByChild("timeSlot").equalTo(timeSlot).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -118,7 +131,7 @@ public class ConsultancyActivity extends AppCompatActivity {
     }
 
     private void confirmBooking(String consultantName, Calendar date, String selectedTimeSlot, androidx.appcompat.app.AlertDialog dialog) {
-        String dateKey = String.format("%04d%02d%02d", date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH));
+        String dateKey = new SimpleDateFormat("yyyyMMdd", Locale.US).format(date.getTime());
         databaseReference.child(dateKey).orderByChild("timeSlot").equalTo(selectedTimeSlot).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -134,6 +147,18 @@ public class ConsultancyActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(ConsultancyActivity.this, "Booking confirmed!", Toast.LENGTH_SHORT).show();
                             Log.d("ConsultancyActivity", "Booking confirmed: " + bookingId);
+
+                            // Fetch current user's email from Firebase Authentication and send confirmation email
+                            FirebaseUser currentUser = auth.getCurrentUser();
+                            if (currentUser != null) {
+                                fetchUserEmailAndSendConfirmationEmail(currentUser.getUid(), currentUser.getEmail(), bookingId, "Booking Confirmation", "Dear " + currentUser.getDisplayName() + ",\n\nYour booking has been confirmed.\n\nRegards,\nConsultancy Team");
+                            } else {
+                                Log.e("ConsultancyActivity", "User not logged in.");
+                            }
+
+                            // Send email notification to supervisor
+                            sendBookingNotificationToSupervisor(consultantName, date, selectedTimeSlot);
+
                             dialog.dismiss();
                         } else {
                             Toast.makeText(ConsultancyActivity.this, "Failed to book slot. Please try again.", Toast.LENGTH_SHORT).show();
@@ -151,9 +176,34 @@ public class ConsultancyActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchUserEmailAndSendConfirmationEmail(String userId, String senderEmail, String bookingId, String subject, String content) {
+        firestore.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                String recipientEmail = documentSnapshot.getString("email");
+                if (recipientEmail != null) {
+                    EmailSender.sendConfirmationEmail(senderEmail, recipientEmail, subject, content);
+                } else {
+                    Log.e("ConsultancyActivity", "Recipient email not found in Firestore.");
+                }
+            } else {
+                Log.e("ConsultancyActivity", "User document not found in Firestore.");
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("ConsultancyActivity", "Error fetching recipient email from Firestore: " + e.getMessage());
+        });
+    }
+
+    private void sendBookingNotificationToSupervisor(String consultantName, Calendar date, String selectedTimeSlot) {
+        String formattedDate = new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(date.getTime());
+        String subject = "Booking Notification";
+        String content = String.format("Dear Supervisor,\n\nA booking has been made by %s for the slot %s on %s.\n\nRegards,\nConsultancy Team", consultantName, selectedTimeSlot, formattedDate);
+
+        EmailSender.sendConfirmationEmail("kalyani30082004@gmail.com", "supii1609@gmail.com", subject, content);
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
+        onBackPressed();
         return true;
     }
 
