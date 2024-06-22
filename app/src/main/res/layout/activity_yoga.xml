@@ -14,106 +14,61 @@
         android:text="Exercises"
         android:textSize="48sp"
         android:textStyle="bold" />
-    <TextView
-        android:id="@+id/textViewiv1"
+
+    <LinearLayout
+        android:id="@+id/llImageAndInfoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/imageViewAsana"
+            android:layout_width="350dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:contentDescription="Yoga Asana Image" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/textViewAsanaInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:padding="8dp"
+                android:text="Placeholder Text"
+                android:gravity="start" />
+        </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
-        android:text="Surya Namaskaram"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:layout_gravity="center">
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
-
-        <LinearLayout
+        <Button
+            android:id="@+id/btnPrevious"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="60dp"
+            android:text="&lt;"
+            android:textSize="24sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="Surya Namaskar 1"
-                android:src="@drawable/su1" />
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text=">"
+            android:textSize="24sp"
+            android:layout_marginStart="16dp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su2"
-                android:contentDescription="Surya Namaskar 2"
-                android:layout_marginEnd="16dp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su3"
-                android:contentDescription="Surya Namaskar 3"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su4"
-                android:contentDescription="Surya Namaskar 4"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su5"
-                android:contentDescription="Surya Namaskar 5"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su6"
-                android:contentDescription="Surya Namaskar 6"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su7"
-                android:contentDescription="Surya Namaskar 7"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su8"
-                android:contentDescription="Surya Namaskar 8"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su9"
-                android:contentDescription="Surya Namaskar 9"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su10"
-                android:contentDescription="Surya Namaskar 10"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su11"
-                android:contentDescription="Surya Namaskar 11"
-                android:layout_marginEnd="16dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/su12"
-                android:contentDescription="Surya Namaskar 12"
-                android:layout_marginEnd="16dp" />
-
-
-
-
-        </LinearLayout>
-    </HorizontalScrollView>
+    </LinearLayout>
 
 </LinearLayout>

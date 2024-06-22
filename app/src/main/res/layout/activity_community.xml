@@ -35,4 +35,11 @@
         android:text="View Posts"
         android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/butttonsuserpost"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="My Posts" />
+
 </LinearLayout>

@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class CommunityActivity extends AppCompatActivity {
 
     private EditText editTextTitle, editTextContent;
-    private Button buttonSubmit, buttonViewPosts;
+    private Button buttonSubmit, buttonViewPosts,buttonUser;
     private DatabaseReference databasePosts;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
@@ -38,6 +38,7 @@ public class CommunityActivity extends AppCompatActivity {
         editTextContent = findViewById(R.id.editTextContent1);
         buttonSubmit = findViewById(R.id.buttonsSubmit);
         buttonViewPosts = findViewById(R.id.buttonsViewPosts);
+        buttonUser = findViewById(R.id.butttonsuserpost);
 
         databasePosts = FirebaseDatabase.getInstance().getReference("posts");
         firebaseAuth = FirebaseAuth.getInstance();
@@ -57,6 +58,14 @@ public class CommunityActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        buttonUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CommunityActivity.this, UserPostsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void submitPost() {
@@ -73,7 +82,7 @@ public class CommunityActivity extends AppCompatActivity {
                         String username = userTask.getResult().getString("username");
 
                         String id = databasePosts.push().getKey();
-                        Post1 post = new Post1(id, title, content, username);
+                        Post1 post = new Post1(id,username,title, content);
                         databasePosts.child(id).setValue(post).addOnCompleteListener(postTask -> {
                             if (postTask.isSuccessful()) {
                                 runOnUiThread(() -> {

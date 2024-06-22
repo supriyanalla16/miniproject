@@ -84,11 +84,12 @@ public class PostViewActivity extends AppCompatActivity {
         contentView.setText(post.getContent());
         likesView.setText(String.valueOf(post.getLikes()));
 
+        updateLikeButtonState(post, likeButton);
+
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post.addLike();
-                databasePosts.child(post.getId()).setValue(post);
+                toggleLike(post, likeButton);
             }
         });
 
@@ -133,5 +134,37 @@ public class PostViewActivity extends AppCompatActivity {
         }
 
         linearLayoutPosts.addView(postView);
+
+    }
+    private void toggleLike(Post1 post, ImageButton likeButton) {
+        boolean isLiked = post.isLiked(); // Assume you have a method to get the current user's like status
+        int likes = post.getLikes();
+
+        if (isLiked) {
+            likes--;
+            likeButton.setImageResource(R.drawable.ic_heart_outline);
+            likeButton.setColorFilter(getResources().getColor(android.R.color.darker_gray));
+        } else {
+            likes++;
+            likeButton.setImageResource(R.drawable.ic_heart_filled);
+            likeButton.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
+        }
+
+        // Update like status in database
+        DatabaseReference postRef = databasePosts.child(post.getPostId());
+        postRef.child("likes").setValue(likes);
+        postRef.child("liked").setValue(!isLiked); // Update the liked status for the current user
+        post.setLikes(likes);
+        post.setLiked(!isLiked);
+    }
+
+    private void updateLikeButtonState(Post1 post, ImageButton likeButton) {
+        if (post.isLiked()) {
+            likeButton.setImageResource(R.drawable.ic_heart_filled);
+            likeButton.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
+        } else {
+            likeButton.setImageResource(R.drawable.ic_heart_outline);
+            likeButton.setColorFilter(getResources().getColor(android.R.color.darker_gray));
+        }
     }
 }

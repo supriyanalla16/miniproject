@@ -151,7 +151,7 @@ public class ConsultancyActivity extends AppCompatActivity {
                             // Fetch current user's email from Firebase Authentication and send confirmation email
                             FirebaseUser currentUser = auth.getCurrentUser();
                             if (currentUser != null) {
-                                fetchUserEmailAndSendConfirmationEmail(currentUser.getUid(), currentUser.getEmail(), bookingId, "Booking Confirmation", "Dear " + currentUser.getDisplayName() + ",\n\nYour booking has been confirmed.\n\nRegards,\nConsultancy Team");
+                                fetchUserEmailAndSendConfirmationEmail(currentUser.getUid(), currentUser.getEmail(), bookingId, consultantName, selectedTimeSlot, date);
                             } else {
                                 Log.e("ConsultancyActivity", "User not logged in.");
                             }
@@ -176,47 +176,39 @@ public class ConsultancyActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchUserEmailAndSendConfirmationEmail(String userId, String senderEmail, String bookingId, String subject, String content) {
+    private void fetchUserEmailAndSendConfirmationEmail(String userId, String userEmail, String bookingId, String consultantName, String selectedTimeSlot, Calendar date) {
+        // Fetch username from Firestore
         firestore.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                String recipientEmail = documentSnapshot.getString("email");
-                if (recipientEmail != null) {
-                    EmailSender.sendConfirmationEmail(senderEmail, recipientEmail, subject, content);
-                } else {
-                    Log.e("ConsultancyActivity", "Recipient email not found in Firestore.");
+                String username = documentSnapshot.getString("username");
+                if (username == null) {
+                    username = "User"; // Fallback if username is not available
                 }
+
+                // Prepare email content
+                String subject = "Booking Confirmation";
+                String content = "Dear " + username + ",\n\n" +
+                        "Your booking with " + consultantName + " on " + new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(date.getTime()) +
+                        " at " + selectedTimeSlot + " has been confirmed.\n\n" +
+                        "Booking ID: " + bookingId + "\n\n" +
+                        "Thank you for choosing our service.\n\nBest regards,\nYour Company";
+
+                // Send confirmation email
+                EmailSender.sendConfirmationEmail("kalyani30082004@gmail.com", userEmail, subject, content);
             } else {
                 Log.e("ConsultancyActivity", "User document not found in Firestore.");
             }
         }).addOnFailureListener(e -> {
-            Log.e("ConsultancyActivity", "Error fetching recipient email from Firestore: " + e.getMessage());
+            Log.e("ConsultancyActivity", "Failed to fetch username from Firestore: " + e.getMessage());
         });
     }
 
     private void sendBookingNotificationToSupervisor(String consultantName, Calendar date, String selectedTimeSlot) {
-        String formattedDate = new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(date.getTime());
-        String subject = "Booking Notification";
-        String content = String.format("Dear Supervisor,\n\nA booking has been made by %s for the slot %s on %s.\n\nRegards,\nConsultancy Team", consultantName, selectedTimeSlot, formattedDate);
+        String supervisorEmail = "supii1609@gmail.com"; // Replace with actual supervisor email
+        String subject = "New Booking Notification";
+        String content = "A new booking has been made with " + consultantName + " on " +
+                new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(date.getTime()) + " at " + selectedTimeSlot + ".";
 
-        EmailSender.sendConfirmationEmail("kalyani30082004@gmail.com", "supii1609@gmail.com", subject, content);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    public static class Booking {
-        public String consultantName;
-        public String timeSlot;
-
-        public Booking() {
-        }
-
-        public Booking(String consultantName, String timeSlot) {
-            this.consultantName = consultantName;
-            this.timeSlot = timeSlot;
-        }
+        EmailSender.sendConfirmationEmail("kalyani30082004@gmail.com", supervisorEmail, subject, content);
     }
 }
