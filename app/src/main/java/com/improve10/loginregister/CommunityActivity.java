@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class CommunityActivity extends AppCompatActivity {
 
     private EditText editTextTitle, editTextContent;
-    private Button buttonSubmit, buttonViewPosts,buttonUser;
+    private Button buttonSubmit, buttonViewPosts, buttonUser;
     private DatabaseReference databasePosts;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
@@ -58,6 +58,7 @@ public class CommunityActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         buttonUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +66,6 @@ public class CommunityActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     private void submitPost() {
@@ -82,7 +82,7 @@ public class CommunityActivity extends AppCompatActivity {
                         String username = userTask.getResult().getString("username");
 
                         String id = databasePosts.push().getKey();
-                        Post1 post = new Post1(id,username,title, content);
+                        Post1 post = new Post1(id, username, title, content);
                         databasePosts.child(id).setValue(post).addOnCompleteListener(postTask -> {
                             if (postTask.isSuccessful()) {
                                 runOnUiThread(() -> {
@@ -147,21 +147,21 @@ public class CommunityActivity extends AppCompatActivity {
     }
 
     private void showPostSubmittedDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Post Submitted")
-                .setMessage("Your post has been successfully submitted.")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Continue with other operations if needed
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
+        // Ensure this code runs on the main thread
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(CommunityActivity.this)
+                        .setTitle("Post Submitted")
+                        .setMessage("Your post has been successfully submitted.")
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+        });
     }
 
     private void showNegativeSentimentDialog() {
-
-
+        // Implementation for negative sentiment dialog
     }
 
     private void showConsultancyRedirectDialog() {

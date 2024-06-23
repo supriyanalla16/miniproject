@@ -15,6 +15,8 @@ public class LinksActivity extends AppCompatActivity {
     Button Refresh;
     Button Pizza;
     Button Slime;
+    Button Yoga;
+    Button Food;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,8 @@ public class LinksActivity extends AppCompatActivity {
         Refresh = findViewById(R.id.button3);
         Pizza = findViewById(R.id.button4);
         Slime = findViewById(R.id.button5);
+        Food = findViewById(R.id.button18);
+        Yoga = findViewById(R.id.button9);
 
         CalmSong.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +49,25 @@ public class LinksActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Food.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://youtu.be/aje9UGNi_l0?si=X0cH03h4awNMDpub";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+        Yoga.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://vimeo.com/504712752";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+
 
         Pizza.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -105,14 +105,18 @@ public class PostViewActivity extends AppCompatActivity {
                         userRef.get().addOnCompleteListener(task -> {
                             if (task.isSuccessful() && task.getResult() != null) {
                                 String username = task.getResult().getString("username");
-                                Map<String, String> currentComments = post.getComments();
-                                if (currentComments == null) {
-                                    currentComments = new HashMap<>();
+                                if (post.getComments() == null) {
+                                    post.setComments(new HashMap<>());
                                 }
-                                currentComments.put(username + "_" + System.currentTimeMillis(), comment);
-                                post.setComments(currentComments);
-                                databasePosts.child(post.getId()).setValue(post);
-                                commentInput.setText("");
+                                post.getComments().put(username + "_" + System.currentTimeMillis(), comment);
+                                databasePosts.child(post.getPostId()).setValue(post).addOnCompleteListener(commentTask -> {
+                                    if (commentTask.isSuccessful()) {
+                                        addCommentToLayout(username, comment, commentsLayout);
+                                        commentInput.setText("");
+                                    } else {
+                                        Toast.makeText(PostViewActivity.this, "Failed to submit comment", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             } else {
                                 Toast.makeText(PostViewActivity.this, "Failed to fetch username", Toast.LENGTH_SHORT).show();
                             }
@@ -127,15 +131,21 @@ public class PostViewActivity extends AppCompatActivity {
         // Load and display comments
         if (post.getComments() != null) {
             for (Map.Entry<String, String> commentEntry : post.getComments().entrySet()) {
-                TextView commentView = new TextView(this);
-                commentView.setText(commentEntry.getKey().split("_")[0] + ": " + commentEntry.getValue());
-                commentsLayout.addView(commentView);
+                String username = commentEntry.getKey().split("_")[0];
+                String comment = commentEntry.getValue();
+                addCommentToLayout(username, comment, commentsLayout);
             }
         }
 
         linearLayoutPosts.addView(postView);
-
     }
+
+    private void addCommentToLayout(String username, String comment, LinearLayout commentsLayout) {
+        TextView commentView = new TextView(this);
+        commentView.setText(username + ": " + comment);
+        commentsLayout.addView(commentView);
+    }
+
     private void toggleLike(Post1 post, ImageButton likeButton) {
         boolean isLiked = post.isLiked(); // Assume you have a method to get the current user's like status
         int likes = post.getLikes();
