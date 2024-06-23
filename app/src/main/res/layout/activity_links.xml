@@ -17,7 +17,7 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Healing Your Mind"
             android:textColor="#0B0A0A"
@@ -27,13 +27,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="30dp"
             android:orientation="vertical"></LinearLayout>
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
-            android:layout_height="49dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="External Links"
             android:textColor="#1E1C1C"
@@ -61,8 +61,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:orientation="vertical"/>
+            android:layout_height="21dp"
+            android:orientation="vertical" />
 
         <TextView
             android:id="@+id/textView8"
@@ -82,7 +82,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="28dp"
+            android:layout_height="25dp"
             android:orientation="vertical"></LinearLayout>
 
         <Button
@@ -91,9 +91,10 @@
             android:layout_height="wrap_content"
             android:text="Slime"
             android:textSize="20sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="28dp"
+            android:layout_height="24dp"
             android:orientation="vertical"></LinearLayout>
 
         <TextView
@@ -104,15 +105,17 @@
             android:text="Other Activities"
             android:textSize="24sp"
             android:textStyle="bold" />
+
         <Button
             android:id="@+id/button9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Yoga Tutorial"
             android:textSize="20sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="28dp"
+            android:layout_height="21dp"
             android:orientation="vertical"></LinearLayout>
 
         <Button
