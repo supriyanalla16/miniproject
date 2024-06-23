@@ -27,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostViewActivity extends AppCompatActivity {
+public class PostViewActivity extends AppCompatActivity implements PostAdapter.OnPostListener {
 
     private LinearLayout linearLayoutPosts;
     private DatabaseReference databasePosts;
@@ -147,34 +147,42 @@ public class PostViewActivity extends AppCompatActivity {
     }
 
     private void toggleLike(Post1 post, ImageButton likeButton) {
-        boolean isLiked = post.isLiked(); // Assume you have a method to get the current user's like status
-        int likes = post.getLikes();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            boolean isLiked = post.getLikedUsers().containsKey(userId) && post.getLikedUsers().get(userId);
 
-        if (isLiked) {
-            likes--;
-            likeButton.setImageResource(R.drawable.ic_heart_outline);
-            likeButton.setColorFilter(getResources().getColor(android.R.color.darker_gray));
-        } else {
-            likes++;
-            likeButton.setImageResource(R.drawable.ic_heart_filled);
-            likeButton.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
+            if (isLiked) {
+                post.setLikes(post.getLikes() - 1);
+                post.getLikedUsers().put(userId, false);
+            } else {
+                post.setLikes(post.getLikes() + 1);
+                post.getLikedUsers().put(userId, true);
+            }
+
+            databasePosts.child(post.getPostId()).setValue(post);
+            updateLikeButtonState(post, likeButton);
         }
-
-        // Update like status in database
-        DatabaseReference postRef = databasePosts.child(post.getPostId());
-        postRef.child("likes").setValue(likes);
-        postRef.child("liked").setValue(!isLiked); // Update the liked status for the current user
-        post.setLikes(likes);
-        post.setLiked(!isLiked);
     }
 
     private void updateLikeButtonState(Post1 post, ImageButton likeButton) {
-        if (post.isLiked()) {
-            likeButton.setImageResource(R.drawable.ic_heart_filled);
-            likeButton.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
-        } else {
-            likeButton.setImageResource(R.drawable.ic_heart_outline);
-            likeButton.setColorFilter(getResources().getColor(android.R.color.darker_gray));
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            boolean isLiked = post.getLikedUsers().containsKey(userId) && post.getLikedUsers().get(userId);
+
+            if (isLiked) {
+                likeButton.setImageResource(R.drawable.ic_heart_filled);
+                likeButton.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
+            } else {
+                likeButton.setImageResource(R.drawable.ic_heart_outline);
+                likeButton.setColorFilter(getResources().getColor(android.R.color.darker_gray));
+            }
         }
+    }
+
+    @Override
+    public void onDeleteClick(int position) {
+        // Not implemented here
     }
 }

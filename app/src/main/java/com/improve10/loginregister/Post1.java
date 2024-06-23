@@ -11,16 +11,12 @@ public class Post1 {
     private String title;
     private String content;
     private int likes;
-    private boolean liked;
+    private Map<String, Boolean> likedUsers; // Map to store which users liked this post
     private Map<String, String> comments;
 
-    // Default constructor required for calls to DataSnapshot.getValue(Post1.class)
     public Post1() {
-        // Initialize default values
-        this.id = id;
-
         this.likes = 0;
-        this.liked = false;
+        this.likedUsers = new HashMap<>();
         this.comments = new HashMap<>();
     }
 
@@ -29,12 +25,11 @@ public class Post1 {
         this.username = username;
         this.title = title;
         this.content = content;
-        this.likes = 0;  // Initialize likes to 0
-        this.liked = false;  // Initialize liked status to false
+        this.likes = 0;
+        this.likedUsers = new HashMap<>();
         this.comments = new HashMap<>();
     }
 
-    // Getters and setters
     public String getPostId() {
         return postId;
     }
@@ -75,12 +70,12 @@ public class Post1 {
         this.likes = likes;
     }
 
-    public boolean isLiked() {
-        return liked;
+    public Map<String, Boolean> getLikedUsers() {
+        return likedUsers;
     }
 
-    public void setLiked(boolean liked) {
-        this.liked = liked;
+    public void setLikedUsers(Map<String, Boolean> likedUsers) {
+        this.likedUsers = likedUsers;
     }
 
     public Map<String, String> getComments() {
@@ -89,12 +84,5 @@ public class Post1 {
 
     public void setComments(Map<String, String> comments) {
         this.comments = comments;
-    }
-
-    public void addComment(String username, String comment) {
-        this.comments.put(username + "_" + System.currentTimeMillis(), comment);
-    }
-    public String getId() {
-        return id;
     }
 }

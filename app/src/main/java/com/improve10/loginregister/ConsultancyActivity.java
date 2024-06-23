@@ -78,7 +78,7 @@ public class ConsultancyActivity extends AppCompatActivity {
 
         DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
         Spinner spinnerTimeSlots = dialogView.findViewById(R.id.spinnerTimeSlots);
-        TextView textViewAvailableSlots = dialogView.findViewById(R.id.textViewAvailableSlots);
+        TextView textViewAvailableSlots = dialogView.findViewById(R.id.textViewAvailableSlots); // Ensure correct initialization
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TIME_SLOTS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
