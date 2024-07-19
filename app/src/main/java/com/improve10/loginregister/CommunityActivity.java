@@ -127,17 +127,22 @@ public class CommunityActivity extends AppCompatActivity {
         userRef.update("negativeSentimentCount", FieldValue.increment(1))
                 .addOnCompleteListener(negSentTask -> {
                     if (negSentTask.isSuccessful()) {
+
                         userRef.get().addOnCompleteListener(countTask -> {
                             if (countTask.isSuccessful() && countTask.getResult() != null) {
                                 Long count = countTask.getResult().getLong("negativeSentimentCount");
                                 if (count != null && count >= 5) {
                                     showConsultancyRedirectDialog();
-                                    userRef.update("negativeSentimentCount", 0);  // Reset counter
+
                                 } else {
                                     showNegativeSentimentDialog();
                                 }
                             }
                         });
+                    }
+                    else
+                    {
+                        userRef.update("negativeSentimentCount", 0);
                     }
                 });
     }
